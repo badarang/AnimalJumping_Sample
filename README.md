@@ -8,11 +8,13 @@ A group of 8 blocks that handles various functionalities, such as `visibilityChe
 ---
 
 ### **BlockGroupDatabase** 📂
-<img width="200" height="700" alt="BlockGroupPrefabDataBase" src="https://github.com/user-attachments/assets/6a7a88a5-2e8d-49c6-817c-66b27c800aa9">
+<img width="200" alt="BlockGroupPrefabDataBase" src="https://github.com/user-attachments/assets/6a7a88a5-2e8d-49c6-817c-66b27c800aa9">
 
 A ScriptableObject (SO) that manages a list of block group prefabs.
 
-<img width="200" height="700" alt="BlockGroupPrefabDataBase" src="https://github.com/user-attachments/assets/b790b02c-5533-4ad1-9e24-bb2f4c14b236">
+---
+
+<img width="200" alt="BlockGroupPrefabDataBase" src="https://github.com/user-attachments/assets/b790b02c-5533-4ad1-9e24-bb2f4c14b236">
 
 You can configure the spawn probabilities of blocks for both Stage Mode and Endless Mode directly in the Inspector.
 
