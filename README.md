@@ -1,4 +1,4 @@
-# **<애니멀 점핑!> Key Components Overview**
+# **<Animal Jumping!> Key Components Overview**
 
 ### **BlockGroup** 🧱
 <img width="200" alt="BlockGroup" src="https://github.com/user-attachments/assets/b3ed6ec7-6d17-4e82-bd36-a0fff2683cb5">
