@@ -2,7 +2,9 @@
 `Unity` · `Mobile` · `Casual` · `Optimization` · `Gacha`
 
 ## 🎮 프로젝트 개요
-![애점엽서_CMYK](https://github.com/user-attachments/assets/c2c46ec6-770c-46db-8af2-b604e30742c5)
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/c2c46ec6-770c-46db-8af2-b604e30742c5" width="400"/>
+</p>
 
 `애니멀 점핑!`은 동물 캐릭터가 위로 점프하며 장애물을 피하는 원터치 캐주얼 액션 게임입니다.
 Unity 기반으로 개발되었으며, 가볍고 직관적인 조작감 속에서도 전략적인 판단력을 요구하는 게임성을 추구했습니다.
@@ -56,7 +58,7 @@ Unity 기반으로 개발되었으며, 가볍고 직관적인 조작감 속에�
 
 - 레이저 / 아이템 / 블록 그룹을 개별적으로 분리하고
 - 미리 캐싱된 풀 객체(BlockGroup)에 데이터를 바인딩해 조립식으로 생성함으로써
-- GC를 줄이고, 동적 생성의 오버헤드를 최소화했습니다.
+- GC를 줄이고(202KB → 68KB), 동적 생성의 오버헤드를 최소화했습니다.
 
 ---
 
