@@ -9,6 +9,16 @@
 - `애니멀 점핑!`은 동물 캐릭터가 위로 점프하며 장애물을 피하는 원터치 캐주얼 액션 게임입니다.
 - Unity 기반으로 개발되었으며, 가볍고 직관적인 조작감 속에서도 전략적인 판단력을 요구하는 게임성을 추구했습니다.
 
+### 📲 다운로드
+
+<a href="https://play.google.com/store/apps/details?id=com.Badarang.AnimalJumping&hl=ko" target="_blank">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" width="180"/>
+</a>
+&nbsp;
+<a href="https://apps.apple.com/kr/app/%EC%95%A0%EB%8B%88%EB%A9%80-%EC%A0%90%ED%95%91/id6590631455" target="_blank">
+  <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" width="160"/>
+</a>
+
 ---
 
 ## 🎯 기획 의도
