@@ -5,32 +5,15 @@ using UnityEngine;
 
 public class GachaGame : MonoBehaviour
 {
-    [SerializeField]
-    private GameObject gachaPanel;
-
-    [SerializeField]
-    private GameObject gachaParticle;
-
-    [SerializeField]
-    private GameObject gachaPon;
-
-    [SerializeField]
-    private GameObject border;
-
-    [SerializeField]
-    private GameObject gachaBallContainer;
-
-    [SerializeField]
-    private GameObject hand;
-
-    [SerializeField]
-    private GachaHand gachaHand; //Result에 달려있음
-
-    [SerializeField]
-    private GameObject borderDown;
-
-    [SerializeField]
-    private GameObject gachaBallObj;
+    [SerializeField] private GameObject gachaPanel;
+    [SerializeField] private GameObject gachaParticle;
+    [SerializeField] private GameObject gachaPon;
+    [SerializeField] private GameObject border;
+    [SerializeField] private GameObject gachaBallContainer;
+    [SerializeField] private GameObject hand;
+    [SerializeField] private GachaHand gachaHand;
+    [SerializeField] private GameObject borderDown;
+    [SerializeField] private GameObject gachaBallObj;
 
     private readonly int numOfGachaBalls = 25;
 
@@ -40,45 +23,74 @@ public class GachaGame : MonoBehaviour
     private GachaResult[] gachaResults;
     private bool probabilityCorrectNeeded = true;
 
-    [Button] public void StartGachaGame()
+    [Button]
+    public void StartGachaGame()
     {
-        var allUpgradeableAnimals = GameManager.Instance.GetAllUpgradeableAnimals();
-        var selectedAnimals = GameManager.Instance.GetRandomUpgradeableAnimals(allUpgradeableAnimals, numOfGachaBalls);
-        gachaResults = GameManager.Instance.GetGachaResults(selectedAnimals);
-        GoogleMobileAdsManager.Instance.GachaResults = gachaResults;
-
-        foreach (var gachaResult in gachaResults)
-            //Debug.Log(gachaResult.Animal + " " + gachaResult.Grade + " " + gachaResult.Count);
-            GameManager.Instance.SaveDataToServer(gachaResult.Animal, gachaResult.Count);
-
-        gachaBalls = new GameObject[selectedAnimals.Count];
-        for (var i = 0; i < selectedAnimals.Count; i++)
+        if (!TryStartGachaTransaction(out var results))
         {
-            gachaBalls[i] = Instantiate(gachaBallObj, gachaBallContainer.transform, gachaBallContainer.transform);
-            //Randomize the position of the gacha balls
-            gachaBalls[i].transform.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(1f, 2f), 0);
-            gachaBalls[i].transform.localRotation = Quaternion.Euler(0, 0, Random.Range(-180, 180));
-            gachaBalls[i].transform.localScale = new Vector3(.5f, .5f, .5f);
-
-            if (gachaBalls[i].TryGetComponent(out GachaBall gachaBall))
-            {
-                gachaBall.Init(selectedAnimals[i], GameManager.Instance.GetAnimalGrade(selectedAnimals[i]));
-                gachaBalls[i].SetActive(false);
-            }
+            Debug.LogWarning("Not enough currency to start gacha.");
+            return;
         }
 
-        //CreateGachaBalls();
+        gachaResults = results;
+        InitGachaVisuals(gachaResults);
+
         gachaPanel.SetActive(true);
-        gachaPanel.GetComponent<UIAnimationBase>().FadeIn(.85f);
-        gachaPanel.GetComponent<UIAnimationBase>().FadeInChildren(.85f);
+        var anim = gachaPanel.GetComponent<UIAnimationBase>();
+        anim.FadeIn(0.85f);
+        anim.FadeInChildren(0.85f);
+
         if (gachaAnimationCoroutine != null) StopCoroutine(gachaAnimationCoroutine);
         gachaAnimationCoroutine = StartCoroutine(GachaPonCO());
+    }
+
+    private bool TryStartGachaTransaction(out GachaResult[] results)
+    {
+        results = null;
+        var allUpgradeable = GameManager.Instance.GetAllUpgradeableAnimals();
+
+        if (!GameManager.Instance.CanSpendCurrency(numOfGachaBalls))
+            return false;
+
+        GameManager.Instance.SpendCurrency(numOfGachaBalls);
+
+        var selected = GameManager.Instance.GetRandomUpgradeableAnimals(allUpgradeable, numOfGachaBalls);
+        results = GameManager.Instance.GetGachaResults(selected);
+
+        foreach (var result in results)
+        {
+            GameManager.Instance.SaveDataToServer(result.Animal, result.Count);
+        }
+
+        GoogleMobileAdsManager.Instance.GachaResults = results;
+        return true;
+    }
+
+    private void InitGachaVisuals(GachaResult[] results)
+    {
+        gachaBalls = new GameObject[results.Length];
+        for (int i = 0; i < results.Length; i++)
+        {
+            var ball = Instantiate(gachaBallObj, gachaBallContainer.transform);
+            ball.transform.localPosition = new Vector3(Random.Range(-1f, 1f), Random.Range(1f, 2f), 0);
+            ball.transform.localRotation = Quaternion.Euler(0, 0, Random.Range(-180, 180));
+            ball.transform.localScale = Vector3.one * 0.5f;
+
+            if (ball.TryGetComponent(out GachaBall gachaBall))
+            {
+                gachaBall.Init(results[i].Animal, results[i].Grade);
+                ball.SetActive(false);
+            }
+
+            gachaBalls[i] = ball;
+        }
     }
 
     public IEnumerator GachaPonCO()
     {
         SoundManager.Instance.PlaySound("Get Magic Item", .5f);
         yield return new WaitForSeconds(.7f);
+
         gachaPon.SetActive(true);
         gachaPon.GetComponent<UIAnimationBase>().SlowJumpAppear();
         SoundManager.Instance.PlaySound("Cash register 2", .5f);
@@ -90,11 +102,10 @@ public class GachaGame : MonoBehaviour
         SoundManager.Instance.PlaySound("Drum roll 7", .3f);
         gachaParticle.SetActive(true);
         border.SetActive(true);
-        //All gacha balls appear
+
         foreach (var gachaBall in gachaBalls) gachaBall.SetActive(true);
 
         yield return new WaitForSeconds(2f);
-
         SoundManager.Instance.PlaySound("Lottery Balls Spin", .5f);
 
         for (var i = 0; i < 6; i++)
@@ -104,7 +115,6 @@ public class GachaGame : MonoBehaviour
             yield return new WaitForSeconds(time);
         }
 
-        //Rotate hand
         SoundManager.Instance.PlaySound("Vending Machine Handle Twice");
         var sequence = DOTween.Sequence();
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -50), .5f));
@@ -113,7 +123,6 @@ public class GachaGame : MonoBehaviour
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -70), .2f));
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -150), .5f));
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -120), .2f));
-        //borderDown.SetActive(false);
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -200), .5f));
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -180), .2f));
         sequence.Append(hand.transform.DORotate(new Vector3(0, 0, -250), .5f));
@@ -121,7 +130,6 @@ public class GachaGame : MonoBehaviour
         sequence.Play();
 
         yield return new WaitForSeconds(3f);
-        //gachaHand.SwitchTrigger(false);
         gachaPon.GetComponent<UIAnimationBase>().ShrinkOutQuart();
         yield return new WaitForSeconds(.2f);
 
@@ -141,17 +149,17 @@ public class GachaGame : MonoBehaviour
         }
     }
 
-    public GachaResult[] GetGachaResults()
-    {
-        return gachaResults;
-    }
-
-    [Button] public void AddWindForce()
+    [Button]
+    public void AddWindForce()
     {
         foreach (var gachaBall in gachaBalls)
+        {
             if (gachaBall.transform.localPosition.y < .65f)
+            {
                 gachaBall.GetComponent<Rigidbody2D>()
                     .AddForce(new Vector2(Random.Range(-1f, 1f), Random.Range(0f, 1f)) * 500);
+            }
+        }
     }
 
     public void ResetGachaGame()
@@ -163,8 +171,18 @@ public class GachaGame : MonoBehaviour
         gachaParticle.SetActive(false);
         border.SetActive(false);
         borderDown.SetActive(true);
-        foreach (var gachaBall in gachaBalls) Destroy(gachaBall);
+
+        if (gachaBalls != null)
+        {
+            foreach (var gachaBall in gachaBalls)
+            {
+                if (gachaBall != null)
+                    Destroy(gachaBall);
+            }
+        }
     }
+
+    public GachaResult[] GetGachaResults() => gachaResults;
 }
 
 public class GachaResult
@@ -176,7 +194,7 @@ public class GachaResult
         Count = count;
     }
 
-    public Animal Animal { get; set; }
-    public Grade Grade { get; set; }
-    public int Count { get; set; }
+    public Animal Animal { get; }
+    public Grade Grade { get; }
+    public int Count { get; }
 }
