@@ -138,4 +138,18 @@ GameManager.Instance.SpendCurrency(numOfGachaBalls);
 관련하여 학습한 내용을 정리하고 있으며,  
 스터디 파티원들과 아래 노션 페이지를 통해 공유하고 있습니다:
 
-🔗 [Unity DOTS 학습 정리 (Notion)](https://badarang.notion.site/Unity-DOTS-1d94124737e3802fbc9fe48d730a6280?pvs=74)
+
+<table>
+  <tr>
+    <td width="150">
+      <a href="https://badarang.notion.site/Unity-DOTS-1d94124737e3802fbc9fe48d730a6280?pvs=74" target="_blank">
+        <img src="https://github.com/user-attachments/assets/ae43c57b-c16c-41b3-a13c-d9f0b9933f29" width="140">
+      </a>
+    </td>
+    <td valign="middle">
+      🔗 <a href="https://badarang.notion.site/Unity-DOTS-1d94124737e3802fbc9fe48d730a6280?pvs=74" target="_blank"><strong>Unity DOTS 학습 정리 (Notion)</strong></a><br>
+      - Unity DOTS의 핵심 개념을 정리한 문서입니다.<br>
+      - ECS, 캐시 메모리, Job System, Query 구조 등을 설명합니다.
+    </td>
+  </tr>
+</table>
