@@ -110,8 +110,8 @@ public GameObject GetSpawnableBlockGroupPrefabWithHeight(float curHeight)
 
 ---
 
-### 💎 가챠 시스템 트랜잭션
-- 재화 차감 → 결과 생성 → 서버 저장(SaveDataToServer()) → 연출(GachaPonCO()) 흐름이 끊기지 않고 안정적으로 이어지도록 구성했습니다.
+### 💎 가챠 시스템
+- 재화 차감 → 결과 생성(GetGachaResults()) → 서버 저장(SaveDataToServer()) → 연출(GachaPonCO()) 흐름이 끊기지 않고 안정적으로 이어지도록 구성했습니다.
 
 #### 🎲 Gacha 시스템 구조
 
