@@ -111,29 +111,18 @@ public GameObject GetSpawnableBlockGroupPrefabWithHeight(float curHeight)
 ---
 
 ### 💎 가챠 시스템 트랜잭션
-- 가챠는 단순한 연출보다 재화를 소모하는 순간 결과가 보장되어야 하는 Atomic 트랜잭션 구조로 설계되었습니다.
-- 재화 차감 → 결과 생성 → 저장 → 연출 흐름이 끊기지 않고 안정적으로 이어지도록 구성했습니다.
+- 재화 차감 → 결과 생성 → 서버 저장(SaveDataToServer()) → 연출(GachaPonCO()) 흐름이 끊기지 않고 안정적으로 이어지도록 구성했습니다.
 
 #### 🎲 Gacha 시스템 구조
 
 | 단계 | 역할 |
 |------|------|
-| `TryStartGachaTransaction()` | 재화 차감 및 결과 생성 / 실패 시 중단 |
+| `StartGachaTransaction()` | 재화 차감 및 결과 생성 |
 | `InitGachaVisuals()` | 결과 데이터를 기반으로 연출용 구슬 생성 |
 | `GachaPonCO()` | 사운드 + DOTween 연출 → 결과 화면 출력 |
 | `ResetGachaGame()` | 초기화 및 상태 복원 |
 
-#### 🔒 트랜잭션 설계 포인트
-
-```csharp
-if (!GameManager.Instance.CanSpendCurrency(numOfGachaBalls))
-    return false;
-
-GameManager.Instance.SpendCurrency(numOfGachaBalls);
-```
-- 재화가 부족하면 즉시 중단
-- SpendCurrency() 이후 결과 생성 및 서버 저장까지 한 번에 수행
-- 트랜잭션 실패 없이 항상 Atomic하게 보상이 보장됨
+- 재화가 부족하면 중단
 - SaveDataToServer()를 통해 서버 데이터 일관성 유지
 
 ---
